@@ -16,7 +16,7 @@ export default function Home() {
 
         <div className="relative z-10 w-full max-w-5xl text-center space-y-16">
           <div className="space-y-6">
-            <p className="font-label text-secondary tracking-[0.3em] uppercase text-sm animate-fade-in">
+            <p className="font-label text-secondary tracking-[0.3em] uppercase text-lg animate-fade-in">
               منصة التراث الرقمي
             </p>
             <h1 className="text-surface text-8xl md:text-9xl font-display font-bold leading-tight tracking-tighter transition-all duration-700 hover:scale-[1.02] cursor-default">
