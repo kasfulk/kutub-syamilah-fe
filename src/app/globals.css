@@ -1,26 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Noto+Serif+Arabic:wght@400;700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Colors - The Palette of Prestige */
+  --color-primary: #012d1d; /* Forest Ink */
+  --color-on-primary: #ffffff;
+  --color-primary-container: #1b4332;
+  
+  --color-surface: #fcf9f0; /* Parchment Base */
+  --color-on-surface: #1c1c17; /* Organic Black */
+  --color-on-surface-variant: #444746;
+  
+  --color-secondary: #705c23; /* Gold Accent */
+  --color-secondary-container: #f8dd97; /* Highlight */
+  --color-tertiary: #342300; /* Bronze Accent */
+  
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f1eee5;
+  --color-surface-container: #ede9de;
+  --color-surface-container-high: #e7e3d9;
+  --color-surface-container-highest: #dcd8ce;
+  
+  --color-outline-variant: rgba(193, 200, 194, 0.15); /* Ghost Border */
+
+  /* Typography - The Modern Naskh */
+  --font-display: "Noto Serif Arabic", serif;
+  --font-body: "Newsreader", serif;
+  --font-label: "Inter", sans-serif;
+
+  /* Custom Transitions */
+  --ease-editorial: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-surface text-on-surface font-body selection:bg-secondary-container;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display text-primary tracking-tight;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer components {
+  /* The Parchment Stack */
+  .parchment-stack {
+    @apply bg-surface-container-lowest shadow-[0_4px_24px_rgba(28,28,23,0.04)] transition-all duration-500 hover:bg-surface-container-lowest hover:shadow-[0_12px_32px_rgba(28,28,23,0.08)];
+  }
+
+  /* Glassmorphism */
+  .glass {
+    @apply bg-surface-container-highest/80 backdrop-blur-[24px];
+  }
+
+  /* Velvet Depth Gradient */
+  .velvet-depth {
+    background: linear-gradient(135deg, #012d1d 0%, #1b4332 100%);
+  }
+
+  /* Folio Card */
+  .folio-card {
+    @apply bg-surface-container-low rounded-xl p-8 transition-colors duration-400 ease-editorial hover:bg-surface-container;
+  }
+
+  /* Minimal Input */
+  .editorial-input {
+    @apply bg-surface-container-highest border-b border-outline-variant focus:border-secondary outline-none px-6 py-4 transition-all duration-300;
+  }
 }
+
+@layer utilities {
+  mark, .highlight {
+    @apply bg-secondary-container text-tertiary px-1 rounded-sm;
+  }
+}
+
