@@ -5,7 +5,7 @@ export default async function PaginatedReader({ params }: any) {
   const page = parseInt(pageParam);
   
   const [content, bookResponse] = await Promise.all([
-    getKitabKontenByHal(id, 1, 1), // Fetch only 1 section for focused view
+    getKitabKontenByHal(id, page, 1), // Fetch only 1 section for focused view
     getKitabById(id)
   ]);
   
@@ -77,20 +77,36 @@ export default async function PaginatedReader({ params }: any) {
         {/* Floating Navigation Footer */}
         <footer className="fixed bottom-12 left-6 right-6 lg:left-12 lg:right-[calc(48px+20rem)] z-30 pointer-events-none">
           <div className="max-w-md mx-auto glass rounded-2xl p-2 flex justify-between items-center pointer-events-auto shadow-2xl shadow-primary/10 border border-outline-variant/10">
+            {page > 1 ? (
+              <a 
+                href={`/reader/${id}/${page - 1}`}
+                className="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-on-primary transition-all duration-300"
+                title="الصفحة السابقة"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+              </a>
+            ) : (
+              <div className="w-12 h-12" />
+            )}
+
             <div className="flex flex-col items-center gap-1">
               <span className="font-label text-[10px] uppercase tracking-widest text-on-surface/40 leading-none">الصفحة</span>
               <span className="font-display text-lg font-bold text-primary tracking-widest leading-none">
-                 {1} <span className="text-on-surface/20 font-normal">/</span> {totalPages}
+                 {page} <span className="text-on-surface/20 font-normal">/</span> {totalPages}
               </span>
             </div>
 
-            <a 
-                href={`/reader/${id}/2`}
+            {page < totalPages ? (
+              <a 
+                href={`/reader/${id}/${page + 1}`}
                 className="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-on-primary transition-all duration-300"
                 title="الصفحة التالية"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
               </a>
+            ) : (
+              <div className="w-12 h-12" />
+            )}
           </div>
         </footer>
 

@@ -42,6 +42,16 @@ export async function getKitabKonten(id: string, page = 1, limit = 20) {
   return res.json();
 }
 
+export async function getKitabKontenByHal(id: string, hal: number, limit = 20) {
+  const res = await fetch(`${API_URL}/v1/kitab/${id}/konten/${hal}?limit=${limit}`, {
+    cache: "no-store",
+  });
+
+  if (!res.ok) throw new Error("failed fetch kitab konten by hal");
+
+  return res.json();
+}
+
 export async function searchKonten(params: {
   q: string;
   kategori?: string;

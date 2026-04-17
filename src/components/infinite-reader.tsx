@@ -77,7 +77,7 @@ export default function InfiniteReader({ id, initialData, initialPage }: Infinit
 
   return (
     <div className="relative">
-      <article className="max-w-4xl mx-auto px-12 py-24 space-y-24">
+      <article className="max-w-4xl mx-auto px-6 py-12 lg:px-12 lg:py-24 space-y-24">
         {pages.map((pageData, pageIdx) => (
           <div key={`${id}-page-${pageIdx + 1}`} className="space-y-12 animate-fade-in">
             <div className="flex items-center gap-8 opacity-20 hover:opacity-100 transition-opacity duration-700">
@@ -90,7 +90,7 @@ export default function InfiniteReader({ id, initialData, initialPage }: Infinit
               {pageData.data.sections.map((row: any) => (
                 <p
                   key={row.id}
-                  className="text-3xl leading-[2.2] text-on-surface font-body text-justify transition-all duration-1000"
+                  className="text-2xl lg:text-3xl leading-[2.2] text-on-surface font-body text-justify transition-all duration-1000"
                   style={{ direction: 'rtl' }}
                   dangerouslySetInnerHTML={{ __html: row.isi_teks }}
                 />
@@ -114,9 +114,8 @@ export default function InfiniteReader({ id, initialData, initialPage }: Infinit
         </div>
       </article>
 
-      {/* Glassmorphic Navigation Footer (Smart visibility) */}
       <footer 
-        className={`fixed bottom-12 left-12 right-12 lg:right-[calc(80px+20rem)] z-20 pointer-events-none transition-all duration-700 ease-editorial ${showFooter ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}
+        className={`fixed bottom-12 left-6 right-6 lg:left-12 lg:right-[calc(48px+20rem)] z-20 pointer-events-none transition-all duration-700 ease-editorial ${showFooter ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}
       >
         <div className="max-w-md mx-auto glass rounded-2xl p-4 flex justify-between items-center pointer-events-auto shadow-2xl shadow-primary/10 border border-outline-variant/10">
           <div className="px-6 py-3 font-label text-[10px] uppercase tracking-widest text-primary/40 leading-none">
