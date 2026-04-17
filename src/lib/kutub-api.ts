@@ -1,4 +1,6 @@
 const API_URL = process.env.NEXT_PUBLIC_KUTUB_API || "http://localhost:3000";
+const INTERNAL_API_URL = process.env.KUTUB_API_INTERNAL || API_URL;
+
 
 export async function getKitab(params?: {
   page?: number;
@@ -13,7 +15,7 @@ export async function getKitab(params?: {
   if (params?.kategori) search.set("kategori", params.kategori);
   if (params?.limit) search.set("limit", params.limit.toString());
 
-  const res = await fetch(`${API_URL}/v1/kitab?${search}`, {
+  const res = await fetch(`${INTERNAL_API_URL}/v1/kitab?${search}`, {
     cache: "no-store",
   });
 
@@ -23,7 +25,7 @@ export async function getKitab(params?: {
 }
 
 export async function getKitabById(id: string) {
-  const res = await fetch(`${API_URL}/v1/kitab/${id}`, {
+  const res = await fetch(`${INTERNAL_API_URL}/v1/kitab/${id}`, {
     cache: "no-store",
   });
 
@@ -33,7 +35,7 @@ export async function getKitabById(id: string) {
 }
 
 export async function getKitabKonten(id: string, page = 1, limit = 20) {
-  const res = await fetch(`${API_URL}/v1/kitab/${id}/konten?page=${page}&limit=${limit}`, {
+  const res = await fetch(`${INTERNAL_API_URL}/v1/kitab/${id}/konten?page=${page}&limit=${limit}`, {
     cache: "no-store",
   });
 
@@ -43,7 +45,7 @@ export async function getKitabKonten(id: string, page = 1, limit = 20) {
 }
 
 export async function getKitabKontenByHal(id: string, hal: number, limit = 20) {
-  const res = await fetch(`${API_URL}/v1/kitab/${id}/konten/${hal}?limit=${limit}`, {
+  const res = await fetch(`${INTERNAL_API_URL}/v1/kitab/${id}/konten/${hal}?limit=${limit}`, {
     cache: "no-store",
   });
 
@@ -64,7 +66,7 @@ export async function searchKonten(params: {
   if (params.page) search.set("page", params.page.toString());
   if (params.limit) search.set("limit", params.limit.toString());
 
-  const res = await fetch(`${API_URL}/v1/search?${search}`, {
+  const res = await fetch(`${INTERNAL_API_URL}/v1/search?${search}`, {
     cache: "no-store",
   });
 
@@ -74,7 +76,7 @@ export async function searchKonten(params: {
 }
 
 export async function getKategori() {
-  const res = await fetch(`${API_URL}/v1/kategori`, {
+  const res = await fetch(`${INTERNAL_API_URL}/v1/kategori`, {
     cache: "force-cache",
   });
 

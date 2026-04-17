@@ -1,7 +1,17 @@
 import { getKitabKontenByHal, getKitabById } from "@/lib/kutub-api";
 
-export default async function PaginatedReader({ params }: any) {
-  const { id, page: pageParam } = await params;
+function highlightText(text: string, query?: string) {
+  if (!query) return text;
+  
+  // Basic escaping for regex
+  const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escapedQuery})`, "gi");
+  
+  return text.replace(regex, '<mark>$1</mark>');
+}
+
+export default async function PaginatedReader({ params, searchParams }: any) {
+  const [{ id, page: pageParam }, { h }] = await Promise.all([params, searchParams]);
   const page = parseInt(pageParam);
   
   const [content, bookResponse] = await Promise.all([
@@ -63,7 +73,7 @@ export default async function PaginatedReader({ params }: any) {
                 <p 
                   className="text-3xl lg:text-4xl leading-[2.4] text-on-surface font-body text-justify transition-all duration-1000"
                   style={{ direction: 'rtl' }}
-                  dangerouslySetInnerHTML={{ __html: section.isi_teks }}
+                  dangerouslySetInnerHTML={{ __html: highlightText(section.isi_teks, h as string) }}
                 />
               </div>
             ))

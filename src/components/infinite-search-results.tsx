@@ -113,7 +113,7 @@ export default function InfiniteSearchResults({ initialData, query }: InfiniteSe
           </div>
           
           <div className="folio-card !py-10 !px-12 bg-surface-container-low/50 group-hover:bg-surface-container-low transition-colors duration-500">
-            <a href={`/reader/${r.kitab_id}/${r.nomor_bagian}?h=${r.isi_teks}`} className="hover:text-secondary transition-colors">
+            <a href={`/reader/${r.kitab_id}/${r.nomor_bagian}?h=${encodeURIComponent(query)}`} className="hover:text-secondary transition-colors">
               <p 
                 className="text-2xl font-body leading-loose text-on-surface/80"
                 dangerouslySetInnerHTML={{ __html: r.highlight || r.isi_teks }}
