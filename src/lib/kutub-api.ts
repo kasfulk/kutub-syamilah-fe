@@ -1,6 +1,6 @@
-const API_URL = process.env.NEXT_PUBLIC_KUTUB_API || "http://localhost:3000";
-const INTERNAL_API_URL = process.env.KUTUB_API_INTERNAL || API_URL;
-
+const API_URL =
+  process.env.NEXT_PUBLIC_KUTUB_API || "https://kutub.litensweet.id/api";
+const INTERNAL_API_URL = process.env.NEXT_PUBLIC_KUTUB_API || API_URL;
 
 export async function getKitab(params?: {
   page?: number;
@@ -35,9 +35,12 @@ export async function getKitabById(id: string) {
 }
 
 export async function getKitabKonten(id: string, page = 1, limit = 20) {
-  const res = await fetch(`${INTERNAL_API_URL}/v1/kitab/${id}/konten?page=${page}&limit=${limit}`, {
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${INTERNAL_API_URL}/v1/kitab/${id}/konten?page=${page}&limit=${limit}`,
+    {
+      cache: "no-store",
+    },
+  );
 
   if (!res.ok) throw new Error("failed fetch kitab konten");
 
@@ -45,9 +48,12 @@ export async function getKitabKonten(id: string, page = 1, limit = 20) {
 }
 
 export async function getKitabKontenByHal(id: string, hal: number, limit = 20) {
-  const res = await fetch(`${INTERNAL_API_URL}/v1/kitab/${id}/konten/${hal}?limit=${limit}`, {
-    cache: "no-store",
-  });
+  const res = await fetch(
+    `${INTERNAL_API_URL}/v1/kitab/${id}/konten/${hal}?limit=${limit}`,
+    {
+      cache: "no-store",
+    },
+  );
 
   if (!res.ok) throw new Error("failed fetch kitab konten by hal");
 
@@ -84,4 +90,3 @@ export async function getKategori() {
 
   return res.json();
 }
-
