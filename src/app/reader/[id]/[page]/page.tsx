@@ -1,4 +1,4 @@
-import { getKitabKontenByHal, getKitabById } from "@/lib/kutub-api";
+import { getKitabKontenByHal, getKitabById, type KontenKitab } from "@/lib/kutub-api";
 
 function highlightText(text: string, query?: string) {
   if (!query) return text;
@@ -53,13 +53,31 @@ export default async function PaginatedReader({ params, searchParams }: any) {
       <main className="flex-1 mr-0 lg:mr-80 relative bg-surface pb-32">
         
         {/* Floating Header */}
-        <header className="sticky top-0 z-20 py-6 px-6 lg:px-12 glass flex justify-between items-center transition-all duration-500">
-           <div className="font-label text-xs text-on-surface/30 uppercase tracking-widest">
-             وضع الصفحة المحددة
+        <header className="sticky top-0 z-20 py-4 px-6 lg:px-12 glass flex justify-between items-center transition-all duration-500 border-b border-outline-variant/5">
+           <div className="flex items-center gap-6" style={{ direction: 'rtl' }}>
+              <div className="flex flex-col">
+                <h1 className="text-sm lg:text-lg font-display font-bold text-primary truncate max-w-[150px] sm:max-w-[250px] lg:max-w-md">
+                  {kitab.judul}
+                </h1>
+                <p className="text-[10px] lg:text-xs font-label text-secondary truncate">
+                  {kitab.penulis}
+                </p>
+              </div>
+              <div className="hidden sm:block h-8 w-px bg-outline-variant/20" />
+              <div className="hidden md:flex flex-col items-start">
+                <span className="text-[8px] uppercase tracking-widest text-on-surface/40 leading-none mb-1">التصنيف</span>
+                <span className="text-[10px] lg:text-xs font-label text-on-surface/60">{kitab.kategori}</span>
+              </div>
            </div>
 
-           <div className="flex gap-4">
-              <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-primary/5 text-primary transition-colors">
+           <div className="flex gap-3">
+              <div className="flex flex-col items-end mr-4 hidden sm:flex">
+                 <span className="text-[8px] uppercase tracking-widest text-on-surface/40 leading-none mb-1">الصفحة</span>
+                 <span className="font-display text-xs font-bold text-primary">
+                    {page} <span className="text-on-surface/20 font-normal">/</span> {totalPages}
+                 </span>
+              </div>
+              <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high hover:bg-primary/5 text-primary transition-all duration-300 border border-outline-variant/10">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
               </button>
            </div>
@@ -68,7 +86,7 @@ export default async function PaginatedReader({ params, searchParams }: any) {
         {/* Focused Section Content */}
         <article className="max-w-4xl mx-auto px-6 py-12 lg:px-12 lg:py-24 space-y-12">
           {sections.length > 0 ? (
-            sections.map((section: any) => (
+            sections.map((section: KontenKitab) => (
               <div key={section.id} className="animate-fade-in space-y-10">
                 <p 
                   className="text-3xl lg:text-4xl leading-[2.4] text-on-surface font-body text-justify transition-all duration-1000"

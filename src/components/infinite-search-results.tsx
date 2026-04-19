@@ -1,28 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { searchKonten } from "@/lib/kutub-api";
-
-interface SearchResult {
-  kitab_id: number;
-  judul: string;
-  kategori: string;
-  penulis: string;
-  publisher: string;
-  section_id: number;
-  nomor_bagian: number;
-  isi_teks: string;
-  rank: number;
-  highlight: string;
-}
+import { searchKonten, type SearchResult, type Pagination } from "@/lib/kutub-api";
 
 interface InfiniteSearchResultsProps {
   initialData: {
     data: SearchResult[];
-    pagination?: {
-      page: number;
-      total_pages: number;
-    };
+    pagination?: Pagination;
   };
   query: string;
 }

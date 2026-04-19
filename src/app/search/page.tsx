@@ -1,22 +1,32 @@
 import Navbar from "@/components/navbar";
 import Search from "@/components/search";
 import InfiniteSearchResults from "@/components/infinite-search-results";
-import { searchKonten } from "@/lib/kutub-api";
+import { searchKonten, type SearchResult, type PaginatedResponse } from "@/lib/kutub-api";
 
 export default async function SearchPage({ searchParams }: any) {
   const query = await searchParams;
   const q = query?.q;
-  const results = q ? await searchKonten({ q }) : { data: [] };
+  const results: PaginatedResponse<SearchResult[]> = q 
+    ? await searchKonten({ q }) 
+    : { data: [], pagination: { page: 1, limit: 20, total: 0, total_pages: 0 } };
 
   return (
     <div className="bg-surface min-h-screen">
       <Navbar />
 
-      <main className="max-w-5xl mx-auto px-12 pt-40 pb-20">
-        <header className="mb-20 space-y-12">
-          <div className="space-y-4">
-            <p className="font-label text-secondary tracking-[0.3em] uppercase text-[10px]">نتائج البحث في المخطوطات</p>
-            <h1 className="text-6xl font-display font-bold text-primary tracking-tighter">
+      <main className="max-w-5xl mx-auto px-6 lg:px-12 pt-40 pb-20">
+        <header className="mb-20 space-y-12 sticky top-24 z-40 bg-surface/80 backdrop-blur-md py-4 -mx-6 px-6 lg:-mx-12 lg:px-12 rounded-b-3xl border-b border-outline-variant/10 transition-all duration-500 group/header">
+          <div className="space-y-2">
+            <div className="flex items-center gap-4 text-secondary/60">
+              <span className="font-label tracking-[0.2em] uppercase text-[8px] lg:text-[10px]">بحث متقدم</span>
+              <div className="h-px w-12 bg-outline-variant/20" />
+              <div className="flex gap-4 font-label text-[10px] uppercase tracking-wider">
+                 <span className="text-on-surface/30">العنوان</span>
+                 <span className="text-on-surface/30">المؤلف</span>
+                 <span className="text-on-surface/30">التصنيف</span>
+              </div>
+            </div>
+            <h1 className="text-4xl lg:text-6xl font-display font-bold text-primary tracking-tighter transition-all duration-500 group-hover/header:text-secondary">
               {q ? `آثار: ${q}` : "البحث الشامل"}
             </h1>
           </div>
