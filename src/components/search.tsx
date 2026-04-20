@@ -22,11 +22,15 @@ export default function Search({ className = "", withDebounce = true }: SearchPr
   function handleInputChange(val: string) {
     setQ(val || null, { 
       shallow: false, 
-      throttleMs: withDebounce ? 1500 : 0 
+      throttleMs: withDebounce ? 500 : 20000 
     });
   }
 
   function submit(e: React.FormEvent) {
+    // check if url not in /search then redirect to /search
+    if (window.location.pathname !== "/search") {
+      window.location.href = "/search?q="+q;
+    }
     e.preventDefault();
     // Force immediate update on submit
     setQ(q, { shallow: false, throttleMs: 0 });
