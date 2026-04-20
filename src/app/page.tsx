@@ -1,5 +1,6 @@
 import Navbar from "@/components/navbar";
 import Search from "@/components/search";
+import { Suspense } from "react";
 
 export default function Home() {
   return (
@@ -28,7 +29,9 @@ export default function Home() {
           </div>
 
           <div className="pt-8">
-            <Search />
+            <Suspense fallback={<div className="h-20 w-full animate-pulse bg-surface/10 rounded-xl" />}>
+              <Search withDebounce={false} />
+            </Suspense>
           </div>
 
           <div className="pt-16 flex justify-center gap-12 font-label text-xs uppercase tracking-widest text-surface/40">

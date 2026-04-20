@@ -1,56 +1,43 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState, useEffect, useTransition } from "react";
+import { useQueryState } from "nuqs";
+import { useTransition } from "react";
 
 interface SearchProps {
-  defaultValue?: string;
   className?: string;
-  withDebounce?:   boolean;
+  withDebounce?: boolean;
 }
 
-export default function Search({ defaultValue = "", className = "", withDebounce = true }: SearchProps) {
-  const [q, setQ] = useState(defaultValue);
-  const router = useRouter();
+export default function Search({ className = "", withDebounce = true }: SearchProps) {
   const [isPending, startTransition] = useTransition();
+  
+  // Use nuqs to manage 'q' query parameter
+  // shallow: false ensures the server component (SearchPage) re-renders when the URL changes
+  const [q, setQ] = useQueryState("q", {
+    defaultValue: "",
+    shallow: false,
+    startTransition,
+  });
 
-  // Sync state with defaultValue (for browser back/forward)
-  useEffect(() => {
-    if(withDebounce) setQ(defaultValue);
-  }, [defaultValue]);
-
-  // Handle debounce for real-time search
-  useEffect(() => {
-    if (q === defaultValue) return; // Skip if no change from initial
-
-    const timer = setTimeout(() => {
-      startTransition(() => {
-        if (withDebounce) {
-          if (q.trim()) {
-            router.replace(`/search?q=${encodeURIComponent(q)}`);
-          } else if (defaultValue) {
-            router.replace(`/search`); // Clear query if empty but was present
-          }
-        }
-      });
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, [q, defaultValue, router]);
+  function handleInputChange(val: string) {
+    setQ(val || null, { 
+      shallow: false, 
+      throttleMs: withDebounce ? 1500 : 0 
+    });
+  }
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (q.trim()) {
-      router.push(`/search?q=${encodeURIComponent(q)}`);
-    }
+    // Force immediate update on submit
+    setQ(q, { shallow: false, throttleMs: 0 });
   }
 
   return (
     <form onSubmit={submit} className="relative w-full max-w-2xl mx-auto group">
       <input
         type="text"
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
+        value={q || ""}
+        onChange={(e) => handleInputChange(e.target.value)}
         placeholder="ابحث عن كتاب، مؤلف، أو موضوع..."
         className={`w-full bg-surface/10 border-b border-surface/20 text-surface text-2xl py-6 px-4 pr-12 outline-none transition-all duration-500 focus:border-secondary focus:bg-surface/15 placeholder:text-surface/40 font-body ${className}`}
       />
@@ -69,7 +56,7 @@ export default function Search({ defaultValue = "", className = "", withDebounce
         {q && (
           <button 
             type="button"
-            onClick={() => setQ("")}
+            onClick={() => setQ(null)}
             className="text-surface/20 hover:text-secondary transition-colors duration-300"
             title="مسح البحث"
           >

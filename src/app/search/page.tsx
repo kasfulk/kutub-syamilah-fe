@@ -2,6 +2,7 @@ import Navbar from "@/components/navbar";
 import Search from "@/components/search";
 import InfiniteSearchResults from "@/components/infinite-search-results";
 import { searchKonten, type SearchResult, type PaginatedResponse } from "@/lib/kutub-api";
+import { Suspense } from "react";
 
 export default async function SearchPage({ searchParams }: any) {
   const query = await searchParams;
@@ -31,7 +32,9 @@ export default async function SearchPage({ searchParams }: any) {
             </h1>
           </div>
           
-          <Search defaultValue={q} className="!text-primary" withDebounce={false} />
+          <Suspense fallback={<div className="h-16 w-full animate-pulse bg-surface/5 rounded-xl" />}>
+            <Search className="!text-primary"/>
+          </Suspense>
         </header>
 
         <div>
