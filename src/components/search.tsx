@@ -6,9 +6,10 @@ import { useState, useEffect, useTransition } from "react";
 interface SearchProps {
   defaultValue?: string;
   className?: string;
+  withDebounce?:   boolean;
 }
 
-export default function Search({ defaultValue = "", className = "" }: SearchProps) {
+export default function Search({ defaultValue = "", className = "", withDebounce = true }: SearchProps) {
   const [q, setQ] = useState(defaultValue);
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -24,10 +25,12 @@ export default function Search({ defaultValue = "", className = "" }: SearchProp
 
     const timer = setTimeout(() => {
       startTransition(() => {
-        if (q.trim()) {
-          router.replace(`/search?q=${encodeURIComponent(q)}`);
-        } else if (defaultValue) {
-          router.replace(`/search`); // Clear query if empty but was present
+        if (withDebounce) {
+          if (q.trim()) {
+            router.replace(`/search?q=${encodeURIComponent(q)}`);
+          } else if (defaultValue) {
+            router.replace(`/search`); // Clear query if empty but was present
+          }
         }
       });
     }, 1500);

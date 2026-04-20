@@ -9,9 +9,11 @@ interface InfiniteSearchResultsProps {
     pagination?: Pagination;
   };
   query: string;
+  kategori?: string;
+  penulis?: string;
 }
 
-export default function InfiniteSearchResults({ initialData, query }: InfiniteSearchResultsProps) {
+export default function InfiniteSearchResults({ initialData, query, kategori, penulis }: InfiniteSearchResultsProps) {
   const [results, setResults] = useState<SearchResult[]>(initialData.data);
   const [currentPage, setCurrentPage] = useState(initialData.pagination?.page || 1);
   const [loading, setLoading] = useState(false);

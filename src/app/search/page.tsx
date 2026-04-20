@@ -31,7 +31,7 @@ export default async function SearchPage({ searchParams }: any) {
             </h1>
           </div>
           
-          <Search defaultValue={q} className="!text-primary" />
+          <Search defaultValue={q} className="!text-primary" withDebounce={false} />
         </header>
 
         <div>
