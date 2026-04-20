@@ -8,8 +8,8 @@ export default function Navbar() {
 
         <div className="hidden md:flex gap-8 font-label text-sm uppercase tracking-widest text-primary/70">
           <a href="/" className="hover:text-primary transition-colors">الرئيسية</a>
-          <a href="/books" className="hover:text-primary transition-colors">الكتب</a>
-          <a href="/categories" className="hover:text-primary transition-colors">التصنيفات</a>
+          <a href="/books/" className="hover:text-primary transition-colors">الكتب</a>
+          <a href="/categories/" className="hover:text-primary transition-colors">التصنيفات</a>
         </div>
       </div>
 

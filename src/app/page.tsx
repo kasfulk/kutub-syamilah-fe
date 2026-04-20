@@ -1,15 +1,20 @@
+"use client";
+
 import Navbar from "@/components/navbar";
 import Search from "@/components/search";
-import { Suspense } from "react";
-import { redirect } from "next/navigation";
+import { Suspense, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default async function Home({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  const query = await searchParams;
-  // if param 'q' it's found then redirect into /search?q=
-  if (query.q) {
-    redirect(`/search?q=${encodeURIComponent(query.q)}`);
-  }
+function HomeContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("q");
 
+  useEffect(() => {
+    if (query) {
+      router.push(`/search/?q=${encodeURIComponent(query)}`);
+    }
+  }, [query, router]);
 
   return (
     <div className="relative min-h-screen">
@@ -60,8 +65,18 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ q
           </div>
         </div>
       </section>
-
-      {/* Tonal Transition to content might go here if we had more sections */}
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="relative min-h-screen bg-surface flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
   );
 }

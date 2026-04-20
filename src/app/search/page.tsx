@@ -1,15 +1,38 @@
+"use client";
+
 import Navbar from "@/components/navbar";
 import Search from "@/components/search";
 import InfiniteSearchResults from "@/components/infinite-search-results";
 import { searchKonten, type SearchResult, type PaginatedResponse } from "@/lib/kutub-api";
-import { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
-export default async function SearchPage({ searchParams }: any) {
-  const query = await searchParams;
-  const q = query?.q;
-  const results: PaginatedResponse<SearchResult[]> = q 
-    ? await searchKonten({ q, limit: 10 }) 
-    : { data: [], pagination: { page: 1, limit: 10, total: 0, total_pages: 0 } };
+function SearchPageContent() {
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q") || "";
+  const [results, setResults] = useState<PaginatedResponse<SearchResult[]>>({
+    data: [],
+    pagination: { page: 1, limit: 10, total: 0, total_pages: 0 }
+  });
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (q) {
+      setLoading(true);
+      searchKonten({ q, limit: 10 })
+        .then((res) => {
+          setResults(res);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoading(false);
+          setResults({ data: [], pagination: { page: 1, limit: 10, total: 0, total_pages: 0 } });
+        });
+    } else {
+      setResults({ data: [], pagination: { page: 1, limit: 10, total: 0, total_pages: 0 } });
+    }
+  }, [q]);
 
   return (
     <div className="bg-surface min-h-screen">
@@ -38,7 +61,12 @@ export default async function SearchPage({ searchParams }: any) {
         </header>
 
         <div>
-          {results.data.length > 0 ? (
+          {loading ? (
+             <div className="flex flex-col items-center justify-center py-32 space-y-4">
+                <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+                <p className="font-label text-xs uppercase tracking-[0.3em] text-primary/40 animate-pulse">جاري البحث في المكتبة...</p>
+             </div>
+          ) : results.data.length > 0 ? (
             <InfiniteSearchResults initialData={results} query={q} />
           ) : q ? (
             <div className="text-center py-20 bg-surface-container-low rounded-2xl border border-dashed border-outline-variant/30">
@@ -52,7 +80,18 @@ export default async function SearchPage({ searchParams }: any) {
           )}
         </div>
       </main>
-
     </div>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-surface min-h-screen flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+      </div>
+    }>
+      <SearchPageContent />
+    </Suspense>
   );
 }

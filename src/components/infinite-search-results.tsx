@@ -91,7 +91,7 @@ export default function InfiniteSearchResults({ initialData, query, kategori, pe
               </p>
             </div>
             <a 
-              href={`/reader/${r.kitab_id}/${r.nomor_bagian}`} 
+              href={`/reader?id=${r.kitab_id}&page=${r.nomor_bagian}`} 
               className="font-label text-[15px] uppercase tracking-widest text-on-surface/30 hover:text-secondary transition-colors"
             >
               انتقل للموضع ←
@@ -99,14 +99,14 @@ export default function InfiniteSearchResults({ initialData, query, kategori, pe
           </div>
           
           <div className="folio-card !py-10 !px-12 bg-surface-container-low/50 group-hover:bg-surface-container-low transition-colors duration-500">
-            <a href={`/reader/${r.kitab_id}/${r.nomor_bagian}?h=${encodeURIComponent(query)}`} className="hover:text-secondary transition-colors">
+            <a href={`/reader?id=${r.kitab_id}&page=${r.nomor_bagian}&h=${encodeURIComponent(query)}`} className="hover:text-secondary transition-colors">
               <p 
                 className="text-2xl font-body leading-loose text-on-surface/80"
                 dangerouslySetInnerHTML={{ __html: r.highlight || r.isi_teks }}
               />
             </a>
             <div className="mt-8 flex gap-4 font-label text-[10px] uppercase tracking-widest text-on-surface/20">
-               <a href={`/reader/${r.kitab_id}/${r.nomor_bagian}`} className="hover:text-secondary transition-colors">
+               <a href={`/reader?id=${r.kitab_id}&page=${r.nomor_bagian}`} className="hover:text-secondary transition-colors">
                   <span>مصدر الكتاب: {r.judul}</span>
                </a>
                <span>•</span>

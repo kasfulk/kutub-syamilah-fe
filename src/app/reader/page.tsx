@@ -1,5 +1,9 @@
-import { getKitabKontenByHal, getKitabById, type KontenKitab } from "@/lib/kutub-api";
-import { LanguageSelector } from "@/components/language-selector";
+"use client";
+
+import { getKitabKontenByHal, getKitabById, type KontenResponse, type DaftarKitab, type PaginatedResponse, type KontenKitab } from "@/lib/kutub-api";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import Navbar from "@/components/navbar";
 
 function highlightText(text: string, query?: string) {
   if (!query) return text;
@@ -11,18 +15,49 @@ function highlightText(text: string, query?: string) {
   return text.replace(regex, '<mark>$1</mark>');
 }
 
-export default async function PaginatedReader({ params, searchParams }: any) {
-  const [{ id, page: pageParam }, { h, lang }] = await Promise.all([params, searchParams]);
+function ReaderContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id") || "";
+  const pageParam = searchParams.get("page") || "1";
   const page = parseInt(pageParam);
-  
-  const [content, bookResponse] = await Promise.all([
-    getKitabKontenByHal(id, page, 1, lang), // Pass lang to API
-    getKitabById(id)
-  ]);
-  
+  const h = searchParams.get("h");
+  const lang = searchParams.get("lang") || "";
+
+  const [content, setContent] = useState<PaginatedResponse<KontenResponse> | null>(null);
+  const [kitab, setKitab] = useState<DaftarKitab | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (id) {
+      setLoading(true);
+      Promise.all([
+        getKitabKontenByHal(id, page, 1, lang),
+        getKitabById(id)
+      ])
+        .then(([contentRes, bookRes]) => {
+          setContent(contentRes);
+          setKitab(bookRes.data);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error(err);
+          setLoading(false);
+        });
+    }
+  }, [id, page, lang]);
+
+  if (loading || !content || !kitab) {
+    return (
+      <div className="flex bg-surface-container items-center justify-center min-h-screen">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+          <p className="font-label text-xs uppercase tracking-[0.3em] text-primary/40 animate-pulse">جاري تحميل الصفحة...</p>
+        </div>
+      </div>
+    );
+  }
+
   const isArabic = !lang || (lang !== 'id' && lang !== 'en');
-  
-  const kitab = bookResponse.data;
   const sections = content.data.sections;
   const totalPages = content.pagination.total_pages;
 
@@ -33,11 +68,11 @@ export default async function PaginatedReader({ params, searchParams }: any) {
       <aside className="w-80 glass border-l border-outline-variant/10 hidden lg:flex flex-col fixed inset-y-0 right-0 z-30">
         <div className="p-8 border-b border-outline-variant/10">
           {h && (
-            <a href={`/search?q=${h}`} className="font-label text-[10px] text-secondary/60 uppercase tracking-[0.2em] hover:text-secondary transition-colors mb-4 block">
+            <a href={`/search/?q=${h}`} className="font-label text-[10px] text-secondary/60 uppercase tracking-[0.2em] hover:text-secondary transition-colors mb-4 block">
               ← العودة للبحث
             </a>
           )}
-          <a href={`/books/${id}`} className="font-label text-xs text-secondary uppercase tracking-[0.3em] hover:opacity-70 transition-opacity">
+          <a href={`/books/?id=${id}`} className="font-label text-xs text-secondary uppercase tracking-[0.3em] hover:opacity-70 transition-opacity">
             ← العودة للكتاب
           </a>
           <h2 className="text-2xl font-display font-bold mt-6 leading-tight text-primary">
@@ -79,8 +114,6 @@ export default async function PaginatedReader({ params, searchParams }: any) {
            </div>
 
             <div className="flex gap-3 items-center">
-                {/* <LanguageSelector id={id} page={page} h={h as string} lang={lang as string} /> */}
-
                 <div className="flex flex-col items-end mr-4 hidden sm:flex">
                    <span className="text-[8px] uppercase tracking-widest text-on-surface/40 leading-none mb-1">الصفحة</span>
                    <span className="font-display text-xs font-bold text-primary">
@@ -89,7 +122,7 @@ export default async function PaginatedReader({ params, searchParams }: any) {
                 </div>
                 {h && (
                  <a 
-                   href={`/search?q=${h}`}
+                   href={`/search/?q=${h}`}
                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high hover:bg-primary/5 text-primary transition-all duration-300 border border-outline-variant/10"
                    title="العودة للبحث"
                  >
@@ -128,10 +161,7 @@ export default async function PaginatedReader({ params, searchParams }: any) {
           <div className="max-w-md mx-auto glass rounded-2xl p-2 flex justify-between items-center pointer-events-auto shadow-2xl shadow-primary/10 border border-outline-variant/10">
             {page > 1 ? (
               <a 
-                href={`/reader/${id}/${page - 1}?${new URLSearchParams({
-                  ...(h ? { h: h as string } : {}),
-                  ...(lang ? { lang: lang as string } : {})
-                })}`}
+                href={`/reader/?id=${id}&page=${page - 1}${h ? `&h=${h}` : ""}${lang ? `&lang=${lang}` : ""}`}
                 className="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-on-primary transition-all duration-300"
                 title="الصفحة السابقة"
               >
@@ -150,10 +180,7 @@ export default async function PaginatedReader({ params, searchParams }: any) {
 
             {page < totalPages ? (
               <a 
-                href={`/reader/${id}/${page + 1}?${new URLSearchParams({
-                  ...(h ? { h: h as string } : {}),
-                  ...(lang ? { lang: lang as string } : {})
-                })}`}
+                href={`/reader/?id=${id}&page=${page + 1}${h ? `&h=${h}` : ""}${lang ? `&lang=${lang}` : ""}`}
                 className="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-on-primary transition-all duration-300"
                 title="الصفحة التالية"
               >
@@ -167,5 +194,17 @@ export default async function PaginatedReader({ params, searchParams }: any) {
 
       </main>
     </div>
+  );
+}
+
+export default function ReaderPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex bg-surface-container items-center justify-center min-h-screen">
+         <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
+      </div>
+    }>
+      <ReaderContent />
+    </Suspense>
   );
 }
