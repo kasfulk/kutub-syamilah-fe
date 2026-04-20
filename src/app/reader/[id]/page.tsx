@@ -1,8 +1,7 @@
 import { getKitabKontenByHal, getKitabById } from "@/lib/kutub-api";
 
-export default async function PaginatedReader({ params }: any) {
-  const { id, page: pageParam } = await params;
-  const page = parseInt(pageParam);
+export default async function PaginatedReader({ params, searchParams }: any) {
+  const [{ id }, { h }] = await Promise.all([params, searchParams]);
   
   const [content, bookResponse] = await Promise.all([
     getKitabKontenByHal(id, 1, 1), // Fetch only 1 section for focused view
@@ -19,6 +18,11 @@ export default async function PaginatedReader({ params }: any) {
       {/* Editorial Sidebar */}
       <aside className="w-80 glass border-l border-outline-variant/10 hidden lg:flex flex-col fixed inset-y-0 right-0 z-30">
         <div className="p-8 border-b border-outline-variant/10">
+          {h && (
+            <a href={`/search?q=${h}`} className="font-label text-[10px] text-secondary/60 uppercase tracking-[0.2em] hover:text-secondary transition-colors mb-4 block">
+              ← العودة للبحث
+            </a>
+          )}
           <a href={`/books/${id}`} className="font-label text-xs text-secondary uppercase tracking-[0.3em] hover:opacity-70 transition-opacity">
             ← العودة للكتاب
           </a>
@@ -48,11 +52,20 @@ export default async function PaginatedReader({ params }: any) {
              وضع الصفحة المحددة
            </div>
 
-           <div className="flex gap-4">
+            <div className="flex gap-4">
+              {h && (
+                <a 
+                  href={`/search?q=${h}`}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-primary/5 text-primary transition-colors"
+                  title="العودة للبحث"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </a>
+              )}
               <button className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-primary/5 text-primary transition-colors">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
               </button>
-           </div>
+            </div>
         </header>
 
         {/* Focused Section Content */}

@@ -29,6 +29,11 @@ export default async function PaginatedReader({ params, searchParams }: any) {
       {/* Editorial Sidebar */}
       <aside className="w-80 glass border-l border-outline-variant/10 hidden lg:flex flex-col fixed inset-y-0 right-0 z-30">
         <div className="p-8 border-b border-outline-variant/10">
+          {h && (
+            <a href={`/search?q=${h}`} className="font-label text-[10px] text-secondary/60 uppercase tracking-[0.2em] hover:text-secondary transition-colors mb-4 block">
+              ← العودة للبحث
+            </a>
+          )}
           <a href={`/books/${id}`} className="font-label text-xs text-secondary uppercase tracking-[0.3em] hover:opacity-70 transition-opacity">
             ← العودة للكتاب
           </a>
@@ -71,16 +76,25 @@ export default async function PaginatedReader({ params, searchParams }: any) {
            </div>
 
            <div className="flex gap-3">
-              <div className="flex flex-col items-end mr-4 hidden sm:flex">
-                 <span className="text-[8px] uppercase tracking-widest text-on-surface/40 leading-none mb-1">الصفحة</span>
-                 <span className="font-display text-xs font-bold text-primary">
-                    {page} <span className="text-on-surface/20 font-normal">/</span> {totalPages}
-                 </span>
-              </div>
-              <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high hover:bg-primary/5 text-primary transition-all duration-300 border border-outline-variant/10">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-              </button>
-           </div>
+               <div className="flex flex-col items-end mr-4 hidden sm:flex">
+                  <span className="text-[8px] uppercase tracking-widest text-on-surface/40 leading-none mb-1">الصفحة</span>
+                  <span className="font-display text-xs font-bold text-primary">
+                     {page} <span className="text-on-surface/20 font-normal">/</span> {totalPages}
+                  </span>
+               </div>
+               {h && (
+                <a 
+                  href={`/search?q=${h}`}
+                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high hover:bg-primary/5 text-primary transition-all duration-300 border border-outline-variant/10"
+                  title="العودة للبحث"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                </a>
+               )}
+               <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high hover:bg-primary/5 text-primary transition-all duration-300 border border-outline-variant/10">
+                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+               </button>
+            </div>
         </header>
 
         {/* Focused Section Content */}
