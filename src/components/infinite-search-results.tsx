@@ -60,7 +60,7 @@ export default function InfiniteSearchResults({ initialData, query, kategori, pe
     setLoading(true);
     try {
       const nextPage = currentPage + 1;
-      const response = await searchKonten({ q: query, page: nextPage });
+      const response = await searchKonten({ q: query, page: nextPage, limit: 10 });
       
       if (response.data && response.data.length > 0) {
         setResults((prev) => [...prev, ...response.data]);
