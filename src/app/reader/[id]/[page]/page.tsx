@@ -1,4 +1,5 @@
 import { getKitabKontenByHal, getKitabById, type KontenKitab } from "@/lib/kutub-api";
+import { LanguageSelector } from "@/components/language-selector";
 
 function highlightText(text: string, query?: string) {
   if (!query) return text;
@@ -11,13 +12,15 @@ function highlightText(text: string, query?: string) {
 }
 
 export default async function PaginatedReader({ params, searchParams }: any) {
-  const [{ id, page: pageParam }, { h }] = await Promise.all([params, searchParams]);
+  const [{ id, page: pageParam }, { h, lang }] = await Promise.all([params, searchParams]);
   const page = parseInt(pageParam);
   
   const [content, bookResponse] = await Promise.all([
-    getKitabKontenByHal(id, page, 1), // Fetch only 1 section for focused view
+    getKitabKontenByHal(id, page, 1, lang), // Pass lang to API
     getKitabById(id)
   ]);
+  
+  const isArabic = !lang || (lang !== 'id' && lang !== 'en');
   
   const kitab = bookResponse.data;
   const sections = content.data.sections;
@@ -75,26 +78,28 @@ export default async function PaginatedReader({ params, searchParams }: any) {
               </div>
            </div>
 
-           <div className="flex gap-3">
-               <div className="flex flex-col items-end mr-4 hidden sm:flex">
-                  <span className="text-[8px] uppercase tracking-widest text-on-surface/40 leading-none mb-1">الصفحة</span>
-                  <span className="font-display text-xs font-bold text-primary">
-                     {page} <span className="text-on-surface/20 font-normal">/</span> {totalPages}
-                  </span>
-               </div>
-               {h && (
-                <a 
-                  href={`/search?q=${h}`}
-                  className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high hover:bg-primary/5 text-primary transition-all duration-300 border border-outline-variant/10"
-                  title="العودة للبحث"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                </a>
-               )}
-               <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high hover:bg-primary/5 text-primary transition-all duration-300 border border-outline-variant/10">
-                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-               </button>
-            </div>
+            <div className="flex gap-3 items-center">
+                {/* <LanguageSelector id={id} page={page} h={h as string} lang={lang as string} /> */}
+
+                <div className="flex flex-col items-end mr-4 hidden sm:flex">
+                   <span className="text-[8px] uppercase tracking-widest text-on-surface/40 leading-none mb-1">الصفحة</span>
+                   <span className="font-display text-xs font-bold text-primary">
+                      {page} <span className="text-on-surface/20 font-normal">/</span> {totalPages}
+                   </span>
+                </div>
+                {h && (
+                 <a 
+                   href={`/search?q=${h}`}
+                   className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high hover:bg-primary/5 text-primary transition-all duration-300 border border-outline-variant/10"
+                   title="العودة للبحث"
+                 >
+                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                 </a>
+                )}
+                <button className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-container-high hover:bg-primary/5 text-primary transition-all duration-300 border border-outline-variant/10">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                </button>
+             </div>
         </header>
 
         {/* Focused Section Content */}
@@ -103,8 +108,10 @@ export default async function PaginatedReader({ params, searchParams }: any) {
             sections.map((section: KontenKitab) => (
               <div key={section.id} className="animate-fade-in space-y-10">
                 <p 
-                  className="text-3xl lg:text-4xl leading-[2.4] text-on-surface font-body text-justify transition-all duration-1000"
-                  style={{ direction: 'rtl' }}
+                  className={`text-3xl lg:text-4xl leading-[2.4] text-on-surface font-body text-justify transition-all duration-1000 ${
+                    isArabic ? 'font-arabic' : 'font-sans italic opacity-90'
+                  }`}
+                  style={{ direction: isArabic ? 'rtl' : 'ltr' }}
                   dangerouslySetInnerHTML={{ __html: highlightText(section.isi_teks, h as string) }}
                 />
               </div>
@@ -121,7 +128,10 @@ export default async function PaginatedReader({ params, searchParams }: any) {
           <div className="max-w-md mx-auto glass rounded-2xl p-2 flex justify-between items-center pointer-events-auto shadow-2xl shadow-primary/10 border border-outline-variant/10">
             {page > 1 ? (
               <a 
-                href={`/reader/${id}/${page - 1}`}
+                href={`/reader/${id}/${page - 1}?${new URLSearchParams({
+                  ...(h ? { h: h as string } : {}),
+                  ...(lang ? { lang: lang as string } : {})
+                })}`}
                 className="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-on-primary transition-all duration-300"
                 title="الصفحة السابقة"
               >
@@ -140,7 +150,10 @@ export default async function PaginatedReader({ params, searchParams }: any) {
 
             {page < totalPages ? (
               <a 
-                href={`/reader/${id}/${page + 1}`}
+                href={`/reader/${id}/${page + 1}?${new URLSearchParams({
+                  ...(h ? { h: h as string } : {}),
+                  ...(lang ? { lang: lang as string } : {})
+                })}`}
                 className="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-on-primary transition-all duration-300"
                 title="الصفحة التالية"
               >

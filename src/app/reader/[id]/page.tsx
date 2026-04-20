@@ -1,12 +1,15 @@
 import { getKitabKontenByHal, getKitabById } from "@/lib/kutub-api";
+import { LanguageSelector } from "@/components/language-selector";
 
 export default async function PaginatedReader({ params, searchParams }: any) {
-  const [{ id }, { h }] = await Promise.all([params, searchParams]);
+  const [{ id }, { h, lang }] = await Promise.all([params, searchParams]);
   
   const [content, bookResponse] = await Promise.all([
-    getKitabKontenByHal(id, 1, 1), // Fetch only 1 section for focused view
+    getKitabKontenByHal(id, 1, 1, lang), // Pass lang to API
     getKitabById(id)
   ]);
+
+  const isArabic = !lang || (lang !== 'id' && lang !== 'en');
   
   const kitab = bookResponse.data;
   const sections = content.data.sections;
@@ -52,7 +55,9 @@ export default async function PaginatedReader({ params, searchParams }: any) {
              وضع الصفحة المحددة
            </div>
 
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
+              {/* <LanguageSelector id={id} h={h as string} lang={lang as string} /> */}
+
               {h && (
                 <a 
                   href={`/search?q=${h}`}
@@ -74,8 +79,10 @@ export default async function PaginatedReader({ params, searchParams }: any) {
             sections.map((section: any) => (
               <div key={section.id} className="animate-fade-in space-y-10">
                 <p 
-                  className="text-3xl lg:text-4xl leading-[2.4] text-on-surface font-body text-justify transition-all duration-1000"
-                  style={{ direction: 'rtl' }}
+                  className={`text-3xl lg:text-4xl leading-[2.4] text-on-surface font-body text-justify transition-all duration-1000 ${
+                    isArabic ? 'font-arabic' : 'font-sans italic opacity-90'
+                  }`}
+                  style={{ direction: isArabic ? 'rtl' : 'ltr' }}
                   dangerouslySetInnerHTML={{ __html: section.isi_teks }}
                 />
               </div>
@@ -98,7 +105,10 @@ export default async function PaginatedReader({ params, searchParams }: any) {
             </div>
 
             <a 
-                href={`/reader/${id}/2`}
+                href={`/reader/${id}/2?${new URLSearchParams({
+                  ...(h ? { h: h as string } : {}),
+                  ...(lang ? { lang: lang as string } : {})
+                })}`}
                 className="w-12 h-12 flex items-center justify-center rounded-xl bg-primary/5 text-primary hover:bg-primary hover:text-on-primary transition-all duration-300"
                 title="الصفحة التالية"
               >

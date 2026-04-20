@@ -95,10 +95,17 @@ export async function getKitabById(id: string): Promise<SingleResponse<DaftarKit
 export async function getKitabKonten(
   id: string,
   page = 1,
-  limit = 20
+  limit = 20,
+  lang?: string
 ): Promise<PaginatedResponse<KontenResponse>> {
+  const search = new URLSearchParams({
+    page: page.toString(),
+    limit: limit.toString(),
+  });
+  if (lang) search.set("lang", lang);
+
   const res = await fetch(
-    `${INTERNAL_API_URL}/v1/kitab/${id}/konten?page=${page}&limit=${limit}`,
+    `${INTERNAL_API_URL}/v1/kitab/${id}/konten?${search}`,
     {
       cache: "no-store",
     }
@@ -112,10 +119,16 @@ export async function getKitabKonten(
 export async function getKitabKontenByHal(
   id: string,
   hal: number,
-  limit = 20
+  limit = 20,
+  lang?: string
 ): Promise<PaginatedResponse<KontenResponse>> {
+  const search = new URLSearchParams({
+    limit: limit.toString(),
+  });
+  if (lang) search.set("lang", lang);
+
   const res = await fetch(
-    `${INTERNAL_API_URL}/v1/kitab/${id}/konten/${hal}?limit=${limit}`,
+    `${INTERNAL_API_URL}/v1/kitab/${id}/konten/${hal}?${search}`,
     {
       cache: "no-store",
     }
