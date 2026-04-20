@@ -8,8 +8,8 @@ export default async function SearchPage({ searchParams }: any) {
   const query = await searchParams;
   const q = query?.q;
   const results: PaginatedResponse<SearchResult[]> = q 
-    ? await searchKonten({ q }) 
-    : { data: [], pagination: { page: 1, limit: 20, total: 0, total_pages: 0 } };
+    ? await searchKonten({ q, limit: 10 }) 
+    : { data: [], pagination: { page: 1, limit: 10, total: 0, total_pages: 0 } };
 
   return (
     <div className="bg-surface min-h-screen">
