@@ -1,8 +1,19 @@
 import Navbar from "@/components/navbar";
 import Search from "@/components/search";
 import { Suspense } from "react";
+import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 export default function Home() {
+  // if param 'q' it's found then redirect into /search?q=
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q");
+  const router = useRouter();
+  if (q) {
+    router.replace(`/search?q=${q}`);
+  }
+
+
   return (
     <div className="relative min-h-screen">
       <Navbar />
