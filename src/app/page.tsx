@@ -1,16 +1,13 @@
 import Navbar from "@/components/navbar";
 import Search from "@/components/search";
 import { Suspense } from "react";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  const query = await searchParams;
   // if param 'q' it's found then redirect into /search?q=
-  const searchParams = useSearchParams();
-  const q = searchParams.get("q");
-  const router = useRouter();
-  if (q) {
-    router.replace(`/search?q=${q}`);
+  if (query.q) {
+    redirect(`/search?q=${encodeURIComponent(query.q)}`);
   }
 
 
