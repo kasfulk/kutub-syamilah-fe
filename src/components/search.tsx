@@ -16,7 +16,7 @@ export default function Search({ defaultValue = "", className = "", withDebounce
 
   // Sync state with defaultValue (for browser back/forward)
   useEffect(() => {
-    setQ(defaultValue);
+    if(withDebounce) setQ(defaultValue);
   }, [defaultValue]);
 
   // Handle debounce for real-time search
