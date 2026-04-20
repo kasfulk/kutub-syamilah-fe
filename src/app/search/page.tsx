@@ -56,7 +56,7 @@ function SearchPageContent() {
           </div>
           
           <Suspense fallback={<div className="h-16 w-full animate-pulse bg-surface/5 rounded-xl" />}>
-            <Search className="!text-primary"/>
+            <Search className="!text-primary" autoFocus={true}/>
           </Suspense>
         </header>
 

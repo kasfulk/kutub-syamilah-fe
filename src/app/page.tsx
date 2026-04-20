@@ -43,7 +43,7 @@ function HomeContent() {
 
           <div className="pt-8">
             <Suspense fallback={<div className="h-20 w-full animate-pulse bg-surface/10 rounded-xl" />}>
-              <Search withDebounce={false} />
+              <Search withDebounce={false} autoFocus={true} />
             </Suspense>
           </div>
 

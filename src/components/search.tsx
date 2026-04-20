@@ -6,9 +6,10 @@ import { useTransition } from "react";
 interface SearchProps {
   className?: string;
   withDebounce?: boolean;
+  autoFocus?: boolean;
 }
 
-export default function Search({ className = "", withDebounce = true }: SearchProps) {
+export default function Search({ className = "", withDebounce = true, autoFocus = false }: SearchProps) {
   const [isPending, startTransition] = useTransition();
   
   // Use nuqs to manage 'q' query parameter
@@ -40,6 +41,7 @@ export default function Search({ className = "", withDebounce = true }: SearchPr
     <form onSubmit={submit} className="relative w-full max-w-2xl mx-auto group">
       <input
         type="text"
+        autoFocus={autoFocus}
         value={q || ""}
         onChange={(e) => handleInputChange(e.target.value)}
         placeholder="ابحث عن كتاب، مؤلف، أو موضوع..."
